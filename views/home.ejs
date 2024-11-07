@@ -8,6 +8,13 @@
 <body>
   <h1> HTS 홈페이지입니다. </h1>
   <p><%= sessionInfo.Name %>님 환영합니다.</p>
+  <div>
+    <form method="post" action="/logout" id="logout-form">
+      <input type="submit" value="Logout">
+    </form>
+    <a href = "/deleteAccount">회원 탈퇴</a>
+  </div>
+
   <p>내 예수금: <%= sessionInfo.Balance %> 원</p>
   <a href = "/balanceInputOutput">예수금 입금 / 출금</a>
 </body>
