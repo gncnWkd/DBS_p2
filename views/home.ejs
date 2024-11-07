@@ -6,22 +6,9 @@
   <title>HTS 주식 페이지</title>
 </head>
 <body>
-  <h1>유저 목록</h1>
-  <table border="1">
-    <tr>
-      <th>id</th>
-      <th></th>
-      <th>가격</th>
-      <th>업데이트 시간</th>
-    </tr>
-    <% users.forEach(user => { %>
-    <tr>
-      <td><%= user.UserID %></td>
-      <td><%= user.Password %></td>
-      <td><%= user.Name %></td>
-      <td><%= user.Balance %></td>
-    </tr>
-    <% }) %>
-  </table>
+  <h1> HTS 홈페이지입니다. </h1>
+  <p><%= sessionInfo.Name %>님 환영합니다.</p>
+  <p>내 예수금: <%= sessionInfo.Balance %> 원</p>
+  <a href = "/balanceInputOutput">예수금 입금 / 출금</a>
 </body>
 </html>
