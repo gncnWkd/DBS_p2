@@ -31,7 +31,7 @@ db.connect((err) => {
   console.log('MySQL 연결 성공');
 });
 
-// localhost:8000 접속시 로그인페이지로
+// localhost:3000 접속시 로그인페이지로
 app.get('/', (req, res) => {
   if(req.session.user) {
     res.render('home', {sessionInfo: req.session.user})
@@ -118,17 +118,23 @@ app.get('/balanceInputOutput', (req, res) => {
 // 보유 주식 현황 페이지 라우트
 app.get('/myStockList', (req, res) => {
   if(req.session.user) {
-    //db.query('')
-    res.render('myStockList', {sessionInfo: req.session.user})
+    db.query('select holding.StockName, Quantity, CurrentPrice, Price From user inner join Holding on user.UserID = holding.UserID inner join stock on holding.StockName = stock.StockName inner join transaction on holding.UserID = transaction.UserID AND holding.StockName = transaction.StockName Where user.UserID = ?', [req.session.user.UserID], (err, results) => {
+      res.render('myStockList', {myStockList: results, sessionInfo: req.session.user});
+    });
   } else {
     res.redirect('login')
   }
 });
 
-// 주식 거래 내역 페이지 라우트
+// 내 주식 거래 내역 페이지 라우트
 app.get('/myTransaction', (req, res) => {
   if(req.session.user) {
-    res.render('myTransaction', {sessionInfo: req.session.user})
+    db.query('SELECT * FROM transaction WHERE UserID = ?', [req.session.user.UserID], (err, results) => {
+      if(err) throw err;
+
+      res.render('myTransaction', {myTransactionList: results, sessionInfo: req.session.user})
+    });
+    
   } else {
     res.redirect('login')
   }
@@ -347,7 +353,31 @@ app.post('/stockSearch', (req, res) => {
   });
 });
 
+// 보유 주식 검색 기능
+app.post('/myStockSearch', (req, res) => {
+  const {StockName} = req.body;
+  db.query('WITH temp AS (select holding.StockName, Quantity, CurrentPrice, Price From user inner join Holding on user.UserID = holding.UserID inner join stock on holding.StockName = stock.StockName inner join transaction on holding.UserID = transaction.UserID AND holding.StockName = transaction.StockName Where user.UserID = ?) SELECT * FROM temp WHERE StockName LIKE ?', [req.session.user.UserID, '%'+StockName+'%'], (err, results) => {
+    if(err) throw err;
 
+    res.render('myStockList', {myStockList: results, sessionInfo: req.session.user});
+  })
+});
+
+// 내 주식 거래 내역 검색 기능
+app.post('/myTransactionSearch', (req, res) => {
+  var {TransactionStockName, TransactionStartDate, TransactionEndDate} = req.body;
+  if(TransactionStartDate == '') {
+    TransactionStartDate = '1900-01-01';
+  }
+  if(TransactionEndDate == '') {
+    TransactionEndDate = new Date();
+  }
+  db.query('SELECT * FROM transaction WHERE StockName LIKE ? AND Date <= ? AND Date >= ? AND UserID = ?', ['%'+TransactionStockName+'%', TransactionEndDate, TransactionStartDate, req.session.user.UserID], (err, results) => {
+    if(err) throw err;
+
+    res.render('myTransaction', {myTransactionList: results, sessionInfo: req.session.user});
+  })
+});
 
 // 서버 시작
 app.listen(3000, () => {

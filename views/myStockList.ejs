@@ -7,6 +7,32 @@
 </head>
 <body>
   <h1><%= sessionInfo.Name %>님의 보유 주식 현황입니다.</h1>
-  
+  <table border="1">
+    <tr>
+      <th>종목명</th>
+      <th>매수 가격</th>
+      <th>현재 가격</th>
+      <th>보유 수량</th>
+      <th>평가 손익</th>
+      <th>등락률</th>
+    </tr>
+    <% myStockList.forEach(stock => { %>
+    <tr>
+      <td><%= stock.StockName %></td>
+      <td><%= stock.Price %></td>
+      <td><%= stock.CurrentPrice %></td>
+      <td><%= stock.Quantity %></td>
+      <td><%= ((stock.CurrentPrice-stock.Price) * stock.Quantity) %></td>
+      <td><%= ((stock.CurrentPrice-stock.Price) / stock.Price * 100).toFixed(2) %>%</td>
+    </tr>
+    <% }) %>
+  </table>
+  <form method="post" action="/myStockSearch" id="stockSearch-form">
+    <input type="text" name="StockName" placeholder="Stock Name">
+    <input type="submit" value="Search">
+  </form>
+  <br>
+  <a href = "/home">홈으로 돌아가기</a>
+
 </body>
 </html>

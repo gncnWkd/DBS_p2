@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>보유 주식 현황</title>
+</head>
+<body>
+  <h1><%= sessionInfo.Name %>님의 거래 내역 현황입니다.</h1>
+  <table border="1">
+    <tr>
+      <th>종목명</th>
+      <th>매수 / 매도</th>
+      <th>매수가 / 매도가</th>
+      <th>거래 수량</th>
+      <th>거래 날짜</th>
+      <th>거래 시간</th>
+    </tr>
+    <% myTransactionList.forEach(trans => { %>
+    <tr>
+      <td><%= trans.StockName %></td>
+      <td><%= trans.Type %></td>
+      <td><%= trans.Price %></td>
+      <td><%= trans.Amount %></td>
+      <td><%= trans.Date %></td>
+      <td><%= trans.Time %></td>
+    </tr>
+    <% }) %>
+  </table>
+  <form method="post" action="/myTransactionSearch" id="stockSearch-form">
+    <input type="text" name="TransactionStockName" placeholder="Transaction Stock Name">
+    <input type="date" name = "TransactionStartDate">
+    <input type="date" name = "TransactionEndDate">
+    <input type="submit" value="Search">
+  </form>
+  <br>
+  <a href = "/home">홈으로 돌아가기</a>
+
+</body>
+</html>
