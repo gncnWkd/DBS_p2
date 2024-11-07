@@ -115,8 +115,50 @@ app.get('/balanceInputOutput', (req, res) => {
   }
 })
 
+// 보유 주식 현황 페이지 라우트
+app.get('/myStockList', (req, res) => {
+  if(req.session.user) {
+    //db.query('')
+    res.render('myStockList', {sessionInfo: req.session.user})
+  } else {
+    res.redirect('login')
+  }
+});
 
+// 주식 거래 내역 페이지 라우트
+app.get('/myTransaction', (req, res) => {
+  if(req.session.user) {
+    res.render('myTransaction', {sessionInfo: req.session.user})
+  } else {
+    res.redirect('login')
+  }
+});
 
+// 종목 목록 페이지 라우트
+app.get('/stockList', (req, res) => {
+  if(req.session.user) {
+    db.query('SELECT * FROM Stock', (err, results) => {
+      if(err) throw err;
+
+      res.render('stockList', {stockList: results});
+    });
+  } else {
+    res.redirect('login');
+  }
+});
+
+// 종목 검색 페이지 라우트
+app.get('/stockSearch', (req, res) => {
+  if(req.session.user) {
+    db.query('SELECT * FROM Stock', (err, results) => {
+      if(err) throw err;
+
+      res.render('stockSearch', {stockList: results});
+    });
+  } else {
+    res.redirect('login');
+  }
+});
 
 
 
@@ -293,6 +335,16 @@ app.post('/output', (req, res) => {
             </body>
         </html>`);
   }
+});
+
+// 종목 검색 기능
+app.post('/stockSearch', (req, res) => {
+  const {StockName} = req.body;
+  db.query('SELECT * FROM Stock WHERE StockName LIKE ?', ['%'+StockName+'%'], (err, results) => {
+    if(err) throw err;
+
+    res.render('stockList', {stockList: results});
+  });
 });
 
 
